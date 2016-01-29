@@ -26,7 +26,7 @@ namespaces:
     entity: AppBundle\Entity # The default namespace for entities, following API Platform and Symfony best practices
 types: # The list of type to generated (a PHP entity class by type will be generated)
     # MappedSuperclass :
-    Thing:                                  # Contact - Itrf - PlateModel - Country - Plate
+    Thing:                                  # Itrf - Plate
         properties:
             name: ~
     IndividualProduct:                      # Instrument
@@ -192,22 +192,42 @@ types: # The list of type to generated (a PHP entity class by type will be gener
             #     range: Plate
             #     cardinality: "(1..*)"
     Country: # Pays
-        parent: Thing
+        parent: false
         properties:
-            number: {range: Number}
-            nameFr: {range: Text}
-            isoCodeV2: {range: Text}
-            isoCodeV3: {range: Text}
+            number:
+                range: Number
+                ormColumn: 'type="string", length=3, unique=true, options={"comment" = "Country number."}'
+            nameFr:
+                range: Text
+                ormColumn: 'type="string", length=100, nullable=true, options={"comment" = "French name."}'
+            nameEn:
+                range: Text
+                ormColumn: 'type="string", length=100, nullable=true, options={"comment" = "English name."}'
+            isoCodeV2:
+                range: Text
+                ormColumn: 'type="string", length=2, nullable=true, options={"comment" = "ISO code v2."}'
+            isoCodeV3:
+                range: Text
+                ormColumn: 'type="string", length=3, nullable=true, options={"comment" = "ISO code v3."}'
             # sites:                                    ####
             #     range: Site
             #     cardinality: "(1..*)"
     Photograph:
         parent: false
         properties:
-            name: {unique: true}
-            date: {range: Date, nullable: true}
-            isPublic: {range: Boolean}
-            # remarque: {range: Text
+            name:
+                unique: true
+                ormColumn: 'type="string", length=70, unique=true, options={"comment" = "Picture name."}'
+            date:
+                range: Date
+                nullable: true
+                ormColumn: 'type="date", nullable=true, options={"comment" = "Picture date."}'
+            isPublic:
+                range: Boolean
+                ormColumn: 'type="boolean", options={"comment" = "Is the picture public ?"}'
+            # comments:
+            #     range: Text
+            #     ormColumn: 'type="text", nullable=true'
             site:
                 range: Site
                 cardinality: "(*..0)"
