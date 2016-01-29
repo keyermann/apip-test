@@ -26,7 +26,7 @@ namespaces:
     entity: AppBundle\Entity # The default namespace for entities, following API Platform and Symfony best practices
 types: # The list of type to generated (a PHP entity class by type will be generated)
     # MappedSuperclass :
-    Thing:                                  # Itrf - Plate
+    Thing:                                  # Itrf
         properties:
             name: ~
     IndividualProduct:                      # Instrument
@@ -37,8 +37,6 @@ types: # The list of type to generated (a PHP entity class by type will be gener
             category:
                 range: Text
                 ormColumn: 'type="string", nullable=true, options={"comment" = "Product type."}'
-    Place:                                  # Site - Station
-        parent: false
 
     # Entity : -------------------------------------------------------------------------------------------------------
     Agency:
@@ -197,12 +195,9 @@ types: # The list of type to generated (a PHP entity class by type will be gener
             number:
                 range: Number
                 ormColumn: 'type="string", length=3, unique=true, options={"comment" = "Country number."}'
-            nameFr:
+            name:
                 range: Text
-                ormColumn: 'type="string", length=100, nullable=true, options={"comment" = "French name."}'
-            nameEn:
-                range: Text
-                ormColumn: 'type="string", length=100, nullable=true, options={"comment" = "English name."}'
+                ormColumn: 'type="string", length=100, nullable=true, options={"comment" = "Country name."}'
             isoCodeV2:
                 range: Text
                 ormColumn: 'type="string", length=2, nullable=true, options={"comment" = "ISO code v2."}'
@@ -232,11 +227,17 @@ types: # The list of type to generated (a PHP entity class by type will be gener
                 range: Site
                 cardinality: "(*..0)"
     Plate:
-        parent: Thing
+        parent: false
         guessFrom: Thing
         properties:
-            abbreviation: {range: Text}
-            geom: {range: Text}
+            name:
+                ormColumn: 'type="string", length=50, options={"comment" = "Plate name."}'
+            abbreviation:
+                range: Text
+                ormColumn: 'type="string", length=15, options={"comment" = "Plate short name."}'
+            geom:
+                range: Text
+                ormColumn: 'type="MultiPolygon", nullable=true, options={"comment" = "Plate geometry."}'
             plateModel:
                 range: PlateModel
                 cardinality: "(*..1)"
@@ -244,8 +245,13 @@ types: # The list of type to generated (a PHP entity class by type will be gener
         parent: false
         guessFrom: Thing
         properties:
-            name: {unique: true}
-            abbreviation: {range: Text, unique: true}
+            name:
+                unique: true
+                ormColumn: 'type="string", length=50, unique=true, options={"comment" = "Plate name."}'
+            abbreviation:
+                range: Text
+                unique: true
+                ormColumn: 'type="string", length=15, unique=true, options={"comment" = "Plate short name."}'
             # Site:                                     ####
             #     range: Site
             #     cardinality: "(1..*)"
@@ -253,14 +259,30 @@ types: # The list of type to generated (a PHP entity class by type will be gener
         parent: false
         guessFrom: Thing
         properties:
-            name: {range: Text, nullable: true}
-            nameFr: {range: Text, nullable: true}
-            domes: {range: Text, nullable: true}
-            startDate: {range: Date}
-            endDate: {range: Date}
-            height: {range: Float}
-            height: {range: Float}
-            type: {range: Text}
+            name:
+                range: Text
+                nullable: true
+                ormColumn: 'type="text", nullable=true, options={"comment" = "Reference point name."}'
+            domes:
+                range: Text
+                nullable: true
+                ormColumn: 'type="string", length=50, nullable=true, options={"comment" = "Reference point DOMES number."}'
+            startDate:
+                range: Date
+                nullable: true
+                ormColumn: 'type="date", nullable=true, options={"comment" = "Start of the reference point utilization."}'
+            endDate:
+                range: Date
+                nullable: true
+                ormColumn: 'type="date", nullable=true, options={"comment" = "End of the reference point utilization."}'
+            height:
+                range: Float
+                nullable: true
+                ormColumn: 'type="float", nullable=true, options={"comment" = "Approximative height of the point."}'
+            type:
+                range: Text
+                nullable: true
+                ormColumn: 'type="text", nullable=true, options={"comment" = "Type of tehe point."}'
             site:
                 range: Site
                 cardinality: "(*..0)"
@@ -284,17 +306,37 @@ types: # The list of type to generated (a PHP entity class by type will be gener
     Report:
         parent: false
         properties:
-            name: {range: Text, unique: true}
-            isPublic: {range: Boolean}
+            name:
+                range: Text
+                unique: true
+                ormColumn: 'type="string", length=200, unique=true, options={"comment" = "Report name."}'
+            isPublic:
+                range: Boolean
+                ormColumn: 'type="boolean", options={"comment" = "Is the report public ?."}'
     Site:
-        parent: Place
+        parent: false
         guessFrom: Place
         properties:
-            number: {range: Text, unique: true}
-            name: {range: Text, nullable: true}
-            city: {range: Text, nullable: true}
-            region: {range: Text, nullable: true}
-            geom: {range: Text, nullable: true}
+            number:
+                range: Text
+                unique: true
+                ormColumn: 'type="string", length=50, unique=true,options={"comment" = "Site number."}'
+            name:
+                range: Text
+                nullable: true
+                ormColumn: 'type="string", length=100, nullable=true, options={"comment" = "Site name."}'
+            city:
+                range: Text
+                nullable: true
+                ormColumn: 'type="text", nullable=true, options={"comment" = "Site city."}'
+            region:
+                range: Text
+                nullable: true
+                ormColumn: 'type="text", nullable=true, options={"comment" = "Site region/province."}'
+            geom:
+                range: Text
+                nullable: true
+                ormColumn: 'type="Point", nullable=true, options={"comment" = "Site geometry."}'
             # referencePoints:                          ####
             #     range: ReferencePoint
             #     cardinality: "(1..*)"
@@ -311,19 +353,46 @@ types: # The list of type to generated (a PHP entity class by type will be gener
                 range: SitelogPlate
                 cardinality: "(*..1)"
     Station:
-        parent: Place
+        parent: false
         guessFrom: Place
         properties:
-            acronym: {range: Text}
-            cdp: {range: Text, nullable: true}
-            code2: {range: Text, nullable: true}
-            description: {range: Text, nullable: true}
-            startDate: {range: Date}
-            endDate: {range: Date}
-            dataCenters: {range: Text, nullable: true}
-            logsheet: {range: Text, nullable: true}
-            eccentricity: {range: Text, nullable: true}
-            technique: {range: Text, nullable: true}
+            acronym:
+                range: Text
+                ormColumn: ''
+            cdp:
+                range: Text
+                nullable: true
+                ormColumn: ''
+            code2:
+                range: Text
+                nullable: true
+                ormColumn: ''
+            description:
+                range: Text
+                nullable: true
+                ormColumn: ''
+            startDate:
+                range: Date
+                ormColumn: ''
+            endDate:
+                range: Date
+                ormColumn: ''
+            dataCenters:
+                range: Text
+                nullable: true
+                ormColumn: ''
+            logsheet:
+                range: Text
+                nullable: true
+                ormColumn: ''
+            eccentricity:
+                range: Text
+                nullable: true
+                ormColumn: ''
+            technique:
+                range: Text
+                nullable: true
+                ormColumn: ''
             coordinateReferencePoint:
                 range: ReferencePoint
                 cardinality: "(*..1)"
