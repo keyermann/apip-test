@@ -1,0 +1,260 @@
+# Example PHP Schema file
+# Use the following command to regenerate entities:
+# bin/schema generate-types src/ app/config/schema.yml
+rdfa:
+    # - https://raw.githubusercontent.com/schemaorg/schemaorg/sdo-gozer/data/schema.rdfa
+    - http://localhost/schema.rdfa
+relations:
+    - http://localhost/v1.owl
+annotationGenerators: # Generators we want to use, keep it as is for any API Platform project
+    - ApiPlatform\SchemaGenerator\AnnotationGenerator\PhpDocAnnotationGenerator
+    - ApiPlatform\SchemaGenerator\AnnotationGenerator\DoctrineOrmAnnotationGenerator
+    - ApiPlatform\SchemaGenerator\AnnotationGenerator\ConstraintAnnotationGenerator
+    - ApiPlatform\SchemaGenerator\AnnotationGenerator\DunglasApiAnnotationGenerator
+# debug: true
+header: |
+  /*
+   * This file is part of the ITRF API project.
+   *
+   * (c) Kévin Eyermann <kevin.eyermann@ign.fr>
+   *
+   * For the full copyright and license information, please view the LICENSE
+   * file that was distributed with this source code.
+   */
+author: "Kévin Eyermann <kevin.eyermann@ign.fr>"
+namespaces:
+    entity: AppBundle\Entity # The default namespace for entities, following API Platform and Symfony best practices
+types: # The list of type to generated (a PHP entity class by type will be generated)
+    # MappedSuperclass :
+    Thing:                                  # Agency - Contact - Itrf - PlateModel - Country - Plate
+        properties:
+            name: ~
+    Organization: ~                         # Agency
+    Person:                                 # Contact
+        properties:
+            workFor:
+                range: Agency
+                cardinality: "(*..0)"
+            telephone: ~
+            faxNumber: ~
+            email: ~
+    IndividualProduct:                      # Instrument
+        parent: false
+        properties:
+            serialNumber: ~
+            category: {range: Text}
+    Place:                                  # Site - Station
+        parent: false
+
+    # Entity : -------------------------------------------------------------------------------------------------------
+    Agency:
+        parent: false
+        guessFrom: Organization
+        properties:
+            name:
+                ormColumn: 'type="text", unique=true, nullable=false, options={"comment" = "The agency name."}'
+            acronym:
+                range: Text
+            address:
+                range: Text
+            # employee:                                 ####
+            #     range: Person
+            #     cardinality: "(1..*)"
+            # name: ~ #=> Thing
+    Unit: # Block
+        parent: false
+        guessFrom: Thing
+        properties:
+            number: {range: Number}
+            designation: {range: Text}
+    Contact:
+        parent: Person
+        guessFrom: Person
+        properties:
+            telephone2: {range: Text}
+            # stations:                                 ????
+            #     range:
+    ContactStation:
+        parent: false
+        guessFrom: Thing
+        properties:
+            contact:
+                range: Contact
+                cardinality: "(*..1)"
+            station:
+                range: Station
+                cardinality: "(*..1)"
+            contactType: {range: Text}
+            startDate: {range: Date}
+            endDate: {range: Date}
+    Instrument:
+        parent: IndividualProduct
+        guessFrom: IndividualProduct
+        properties:
+            atx: {range: Text}
+            installedDate: {range: Date}
+            removedDate: {range: Date}
+            specifications: {range: Text}
+            station:
+                range: Station
+                cardinality: "(*..1)"
+    Itrf:
+        parent: Thing
+        guessFrom: Thing
+    Mail:
+        parent: false
+        guessFrom: EmailMessage
+        properties:
+            # ewsId: {range: Text}
+            subject: {range: Text}
+            body: {range: Text}
+            bodyType: {range: Text}
+            # references: {range: Text}
+            fromName: {range: Text}
+            fromMail: {range: Text}
+            to: {range: Text}
+            cc: {range: Text}
+            sentDate: {range: DateTime}
+            # culture: {range: Text}
+            stations: {range: Text}
+            domes: {range: Text}
+            # ewsMail: {range: Text}
+            parent:
+                range: Mail
+                cardinality: "(*..1)"
+    PlateModel:
+        parent: Thing
+        guessFrom: Thing
+        properties:
+            abbreviation: {range: Text}
+            # plates:                                   ####
+            #     range: Plate
+            #     cardinality: "(1..*)"
+    Country: # Pays
+        parent: Thing
+        properties:
+            number: {range: Number}
+            nameFr: {range: Text}
+            isoCodeV2: {range: Text}
+            isoCodeV3: {range: Text}
+            # sites:                                    ####
+            #     range: Site
+            #     cardinality: "(1..*)"
+    Photograph:
+        parent: false
+        properties:
+            name: {unique: true}
+            date: {range: Date, nullable: true}
+            isPublic: {range: Boolean}
+            # remarque: {range: Text
+            site:
+                range: Site
+                cardinality: "(*..0)"
+    Plate:
+        parent: Thing
+        guessFrom: Thing
+        properties:
+            abbreviation: {range: Text}
+            geom: {range: Text}
+            plateModel:
+                range: PlateModel
+                cardinality: "(*..1)"
+    SitelogPlate:
+        parent: false
+        guessFrom: Thing
+        properties:
+            name: {unique: true}
+            abbreviation: {range: Text, unique: true}
+            # Site:                                     ####
+            #     range: Site
+            #     cardinality: "(1..*)"
+    ReferencePoint:
+        parent: false
+        guessFrom: Thing
+        properties:
+            name: {range: Text, nullable: true}
+            nameFr: {range: Text, nullable: true}
+            domes: {range: Text, nullable: true}
+            startDate: {range: Date}
+            endDate: {range: Date}
+            height: {range: Float}
+            height: {range: Float}
+            type: {range: Text}
+            site:
+                range: Site
+                cardinality: "(*..0)"
+            # stations:                                 ####
+            #     range: Station
+            #     cardinality: "(*..*)"
+            # referencePointNumbers:
+            #     range: ReferencePointNumbers
+            #     cardinality: "(1..*)"
+    # ReferencePointNumbers:
+    #     parent: false
+    #     guessFrom: Thing
+    #     properties:
+    #         number: {range:Text, nullable: true}
+    #         referencePoint:
+    #             range: ReferencePoint
+    #             cardinality: "(*..1)"
+    #         unit:
+    #             range: Unit
+    #             cardinality: "(*..1)"
+    Report:
+        parent: false
+        properties:
+            name: {range: Text, unique: true}
+            isPublic: {range: Boolean}
+    Site:
+        parent: Place
+        guessFrom: Place
+        properties:
+            number: {range: Text, unique: true}
+            name: {range: Text, nullable: true}
+            city: {range: Text, nullable: true}
+            region: {range: Text, nullable: true}
+            geom: {range: Text, nullable: true}
+            # referencePoints:                          ####
+            #     range: ReferencePoint
+            #     cardinality: "(1..*)"
+            # stations:                                 ####
+            #     range: Station
+            #     cardinality: "(1..*)"
+            # photographs:                              ####
+            #     range: Photograph
+            #     cardinality: "(1..*)"
+            country:
+                range: Country
+                cardinality: "(*..1)"
+            sitelogPlate:
+                range: SitelogPlate
+                cardinality: "(*..1)"
+    Station:
+        parent: Place
+        guessFrom: Place
+        properties:
+            acronym: {range: Text}
+            cdp: {range: Text, nullable: true}
+            code2: {range: Text, nullable: true}
+            description: {range: Text, nullable: true}
+            startDate: {range: Date}
+            endDate: {range: Date}
+            dataCenters: {range: Text, nullable: true}
+            logsheet: {range: Text, nullable: true}
+            eccentricity: {range: Text, nullable: true}
+            technique: {range: Text, nullable: true}
+            coordinateReferencePoint:
+                range: ReferencePoint
+                cardinality: "(*..1)"
+            referencePoints:
+                range: ReferencePoint
+                cardinality: "(*..*)"
+            # instruments:                              ####
+            #     range: Instrument
+            #     cardinality: "(1..*)"
+            site:
+                range: Site
+                cardinality: "(*..1)"
+            # contacts:                                 ####
+            #     range: ContactStation
+            #     cardinality: "(1..*)"
