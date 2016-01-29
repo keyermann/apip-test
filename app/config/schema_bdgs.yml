@@ -26,23 +26,17 @@ namespaces:
     entity: AppBundle\Entity # The default namespace for entities, following API Platform and Symfony best practices
 types: # The list of type to generated (a PHP entity class by type will be generated)
     # MappedSuperclass :
-    Thing:                                  # Agency - Contact - Itrf - PlateModel - Country - Plate
+    Thing:                                  # Contact - Itrf - PlateModel - Country - Plate
         properties:
             name: ~
-    Organization: ~                         # Agency
-    Person:                                 # Contact
-        properties:
-            workFor:
-                range: Agency
-                cardinality: "(*..0)"
-            telephone: ~
-            faxNumber: ~
-            email: ~
     IndividualProduct:                      # Instrument
         parent: false
         properties:
-            serialNumber: ~
-            category: {range: Text}
+            serialNumber:
+                ormColumn: 'type="string", length=50, nullable=true, options={"comment" = "Serial number."}'
+            category:
+                range: Text
+                ormColumn: 'type="string", nullable=true, options={"comment" = "Product type."}'
     Place:                                  # Site - Station
         parent: false
 
@@ -52,26 +46,44 @@ types: # The list of type to generated (a PHP entity class by type will be gener
         guessFrom: Organization
         properties:
             name:
-                ormColumn: 'type="text", unique=true, nullable=false, options={"comment" = "The agency name."}'
+                ormColumn: 'type="text", unique=true, options={"comment" = "The agency name."}'
             acronym:
                 range: Text
+                ormColumn: 'type="text", nullable=true, options={"comment" = "An acronym for the agency."}'
             address:
                 range: Text
+                ormColumn: 'type="text", nullable=true, options={"comment" = "Address of the agency."}'
             # employee:                                 ####
             #     range: Person
             #     cardinality: "(1..*)"
-            # name: ~ #=> Thing
     Unit: # Block
         parent: false
         guessFrom: Thing
         properties:
-            number: {range: Number}
-            designation: {range: Text}
+            number:
+                range: Number
+                ormColumn: 'type="string", length=8, options={"comment" = "DOMES number."}'
+            designation:
+                range: Text
+                ormColumn: 'type="text", nullable=true, options={"comment" = "Désigantion."}'
     Contact:
-        parent: Person
+        parent: false
         guessFrom: Person
         properties:
-            telephone2: {range: Text}
+            name:
+                ormColumn: 'type="text", nullable=false, options={"comment" = "The person name."}'
+            workFor:
+                range: Agency
+                cardinality: "(*..0)"
+            telephone:
+                ormColumn: 'name="telephone_1", type="text", nullable=true, options={"comment" = "Main phone number."}'
+            telephone2:
+                range: Text
+                ormColumn: 'name="telephone_2", type="text", nullable=true, options={"comment" = "Second phone number."}'
+            faxNumber:
+                ormColumn: 'type="text", nullable=true, options={"comment" = "Fax number."}'
+            email:
+                ormColumn: 'type="text", nullable=true, options={"comment" = "Email address."}'
             # stations:                                 ????
             #     range:
     ContactStation:
@@ -84,17 +96,31 @@ types: # The list of type to generated (a PHP entity class by type will be gener
             station:
                 range: Station
                 cardinality: "(*..1)"
-            contactType: {range: Text}
-            startDate: {range: Date}
-            endDate: {range: Date}
+            contactType:
+                range: Text
+                ormColumn: 'type="text", options={"comment" = "The contact type for the station."}'
+            startDate:
+                range: Date
+                ormColumn: 'type="date", nullable=true, options={"comment" = "Starting date."}'
+            endDate:
+                range: Date
+                ormColumn: 'type="date", nullable=true, options={"comment" = "Ending date."}'
     Instrument:
         parent: IndividualProduct
         guessFrom: IndividualProduct
         properties:
-            atx: {range: Text}
-            installedDate: {range: Date}
-            removedDate: {range: Date}
-            specifications: {range: Text}
+            atx:
+                range: Text
+                ormColumn: 'type="string", length=50, nullable=true, options={"comment" = "ATX file informations."}'
+            installedDate:
+                range: Date
+                ormColumn: 'type="date", nullable=true, options={"comment" = "Installation date of the instrument."}'
+            removedDate:
+                range: Date
+                ormColumn: 'type="date", nullable=true, options={"comment" = "Uninstallation date of the instrument."}'
+            specifications:
+                range: Text
+                ormColumn: 'type="jsonb", nullable=true, options={"comment" = "Instrument specifications."}'
             station:
                 range: Station
                 cardinality: "(*..1)"
@@ -105,28 +131,63 @@ types: # The list of type to generated (a PHP entity class by type will be gener
         parent: false
         guessFrom: EmailMessage
         properties:
-            # ewsId: {range: Text}
-            subject: {range: Text}
-            body: {range: Text}
-            bodyType: {range: Text}
-            # references: {range: Text}
-            fromName: {range: Text}
-            fromMail: {range: Text}
-            to: {range: Text}
-            cc: {range: Text}
-            sentDate: {range: DateTime}
-            # culture: {range: Text}
-            stations: {range: Text}
-            domes: {range: Text}
-            # ewsMail: {range: Text}
+            # ewsId:
+            #     range: Text
+            #     ormColumn: 'type="text", options={"comment" = "ews ID."}'
+            subject:
+                range: Text
+                ormColumn: 'type="text", nullable=true, options={"comment" = "Subject of the mail."}'
+            body:
+                range: Text
+                ormColumn: 'type="text", nullable=true, options={"comment" = "Content of the mail."}'
+            bodyType:
+                range: Text
+                ormColumn: 'type="text", nullable=true, options={"comment" = "Content type of the mail."}'
+            # references:
+            #     range: Text
+            #     ormColumn: 'type="text", nullable=true, options={"comment" = "References (parent mails)."}'
+            fromName:
+                range: Text
+                ormColumn: 'type="text", nullable=true, options={"comment" = "Sender name."}'
+            fromMail:
+                range: Text
+                ormColumn: 'type="text", nullable=true, options={"comment" = "Sender email address."}'
+            to:
+                range: Text
+                ormColumn: 'type="text", nullable=true, options={"comment" = "Recipients."}'
+            cc:
+                range: Text
+                ormColumn: 'type="text", nullable=true, options={"comment" = "Copy recipients."}'
+            sentDate:
+                range: DateTime
+                ormColumn: 'type="datetimetz", nullable=true, options={"comment" = "La date d’envoi du mail d’ews."}'
+            # culture:
+            #     range: Text
+            #     ormColumn: 'type="text", nullable=true'
+            stations:
+                range: Text
+                ormColumn: 'type="text", nullable=true, options={"comment" = "Station list detected in the mail subject."}'
+            domes:
+                range: Text
+                ormColumn: 'type="text", nullable=true, options={"comment" = "DOMES number detected in mail content."}'
+            ewsMail:
+                range: Text
+                ormColumn: 'type="text", nullable=true, options={"comment" = "The EWS mail in txt."}'
             parent:
                 range: Mail
                 cardinality: "(*..1)"
     PlateModel:
-        parent: Thing
+        parent: false
         guessFrom: Thing
         properties:
-            abbreviation: {range: Text}
+            name:
+                ormColumn: 'type="string", length=50, options={"comment" = "The plate name."}'
+            abbreviation:
+                range: Text
+                ormColumn: 'type="string", length=15, options={"comment" = "Short name of the plate."}'
+            geom:
+                range: Text
+                ormColumn: 'type="MultiPolygon", nullable=true, options={"comment" = "The plate geometry."}'
             # plates:                                   ####
             #     range: Plate
             #     cardinality: "(1..*)"

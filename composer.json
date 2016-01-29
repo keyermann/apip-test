@@ -21,7 +21,11 @@
         "dunglas/api-bundle": "~1.0",
         "nelmio/cors-bundle": "~1.4",
         "nelmio/api-doc-bundle": "~2.9@dev",
-        "friendsofsymfony/http-cache-bundle": "~1.0"
+        "friendsofsymfony/http-cache-bundle": "~1.0",
+
+        "bdgs/databasemodel-bundle": "~1.6",
+        "creof/doctrine2-spatial": "dev-master",
+        "stof/doctrine-extensions-bundle": "~1.2"
     },
     "require-dev": {
         "sensio/generator-bundle": "~2.3",
@@ -35,10 +39,14 @@
         "hautelook/alice-bundle": "~0.2"
     },
     "repositories": [
-       {
-         "type": "vcs",
-         "url": "https://github.com/keyermann/schema-generator"
-       }
+        {
+            "type": "composer",
+            "url": "http://devsgn.ign.fr:8080/"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/keyermann/schema-generator"
+        }
     ],
     "scripts": {
         "post-root-package-install": [
