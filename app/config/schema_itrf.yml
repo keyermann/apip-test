@@ -24,6 +24,7 @@ types:
     Agency:
         parent: false
         guessFrom: Organization
+        ormTable: 'schema="bdgs"'
         properties:
             name:
                 ormColumn: 'type="text", unique=true, options={"comment" = "The agency name."}'
@@ -39,6 +40,7 @@ types:
     Unit: # Block
         parent: false
         guessFrom: Thing
+        ormTable: 'schema="bdgs"'
         properties:
             number:
                 range: Number
@@ -49,6 +51,7 @@ types:
     Contact:
         parent: false
         guessFrom: Person
+        ormTable: 'schema="bdgs"'
         properties:
             name:
                 ormColumn: 'type="text", nullable=false, options={"comment" = "The person name."}'
@@ -69,6 +72,7 @@ types:
     ContactStation:
         parent: false
         guessFrom: Thing
+        ormTable: 'schema="bdgs"'
         properties:
             contact:
                 range: Contact
@@ -88,6 +92,7 @@ types:
     Instrument:
         parent: false
         guessFrom: IndividualProduct
+        ormTable: 'schema="bdgs"'
         properties:
             serialNumber:
                 ormColumn: 'type="string", length=50, nullable=true, options={"comment" = "Serial number."}'
@@ -112,12 +117,14 @@ types:
     Itrf:
         parent: false
         guessFrom: Thing
+        ormTable: 'schema="itrf"'
         properties:
             name:
                 ormColumn: 'type="string", length=8, unique=true, options={"comment" = "ITRF solution name"}'
     Mail:
         parent: false
         guessFrom: EmailMessage
+        ormTable: 'schema="bdgs"'
         properties:
             # ewsId:
             #     range: Text
@@ -167,6 +174,7 @@ types:
     PlateModel:
         parent: false
         guessFrom: Thing
+        ormTable: 'schema="bdgs"'
         properties:
             name:
                 ormColumn: 'type="string", length=50, options={"comment" = "The plate name."}'
@@ -181,6 +189,7 @@ types:
             #     cardinality: "(1..*)"
     Country: # Pays
         parent: false
+        ormTable: 'schema="bdgs"'
         properties:
             number:
                 range: Number
@@ -199,6 +208,7 @@ types:
             #     cardinality: "(1..*)"
     Photograph:
         parent: false
+        ormTable: 'schema="bdgs"'
         properties:
             name:
                 unique: true
@@ -219,6 +229,7 @@ types:
     Plate:
         parent: false
         guessFrom: Thing
+        ormTable: 'schema="bdgs"'
         properties:
             name:
                 ormColumn: 'type="string", length=50, options={"comment" = "Plate name."}'
@@ -234,6 +245,7 @@ types:
     SitelogPlate:
         parent: false
         guessFrom: Thing
+        ormTable: 'schema="bdgs"'
         properties:
             name:
                 unique: true
@@ -248,6 +260,7 @@ types:
     ReferencePoint:
         parent: false
         guessFrom: Thing
+        ormTable: 'schema="bdgs"'
         properties:
             name:
                 range: Text
@@ -295,6 +308,7 @@ types:
     #             cardinality: "(*..1)"
     Report:
         parent: false
+        ormTable: 'schema="bdgs"'
         properties:
             name:
                 range: Text
@@ -306,6 +320,7 @@ types:
     Site:
         parent: false
         guessFrom: Place
+        ormTable: 'schema="bdgs"'
         properties:
             number:
                 range: Text
@@ -345,6 +360,7 @@ types:
     Station:
         parent: false
         guessFrom: Place
+        ormTable: 'schema="bdgs"'
         properties:
             acronym:
                 range: Text
@@ -412,6 +428,7 @@ types:
     CumulatedResidual:
         parent: false
         guessFrom: Thing
+        ormTable: 'schema="itrf"'
         properties:
             trended:
                 range: Float
@@ -440,6 +457,7 @@ types:
     Covariance:
         parent: false
         guessFrom: Thing
+        ormTable: 'schema="itrf"'
         properties:
             index1:
                 range: Integer
@@ -488,6 +506,7 @@ types:
     PlateRotationPole:
         parent: false
         guessFrom: Thing
+        ormTable: 'schema="itrf"'
         properties:
             xAxis:
                 range: Float
@@ -528,6 +547,7 @@ types:
     Soln:
         parent: false
         guessFrom: Thing
+        ormTable: 'schema="itrf"'
         properties:
             fromDate:
                 range: DateTime
@@ -549,6 +569,7 @@ types:
     Transformation:
         parent: false
         guessFrom: Thing
+        ormTable: 'schema="itrf"'
         properties:
             tX:
                 range: Float
