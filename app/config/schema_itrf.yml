@@ -408,6 +408,7 @@ types:
     # Matrice ???
     # Member ???
     # Mission ???
+    # Solution ???
     CumulatedResidual:
         parent: false
         guessFrom: Thing
@@ -455,7 +456,7 @@ types:
             solution2:
                 range: Solution
                 cardinality: "(*..1)"
-    Solution:
+    Solution: #ItrfSolution
         parent: false
         guessFrom: Thing
         properties:
@@ -543,4 +544,59 @@ types:
                 cardinality: "(*..1)"
             referencePoint:
                 range: ReferencePoint
+                cardinality: "(*..1)"
+    Transformation:
+        parent: false
+        guessFrom: Thing
+        properties:
+            tX:
+                range: Float
+                ormColumn: 'type="float", options={"comment" = ""}'
+            tY:
+                range: Float
+                ormColumn: 'type="float", options={"comment" = ""}'
+            tZ:
+                range: Float
+                ormColumn: 'type="float", options={"comment" = ""}'
+            d:
+                range: Float
+                ormColumn: 'type="float", options={"comment" = ""}'
+            rX:
+                range: Float
+                ormColumn: 'type="float", options={"comment" = ""}'
+            rY:
+                range: Float
+                ormColumn: 'type="float", options={"comment" = ""}'
+            rZ:
+                range: Float
+                ormColumn: 'type="float", options={"comment" = ""}'
+            epoch:
+                range: Float
+                ormColumn: 'type="float", options={"comment" = ""}'
+            tXRate:
+                range: Float
+                ormColumn: 'type="float", options={"comment" = ""}'
+            tYRate:
+                range: Float
+                ormColumn: 'type="float", options={"comment" = ""}'
+            tZRate:
+                range: Float
+                ormColumn: 'type="float", options={"comment" = ""}'
+            dRate:
+                range: Float
+                ormColumn: 'type="float", options={"comment" = ""}'
+            rXRate:
+                range: Float
+                ormColumn: 'type="float", options={"comment" = ""}'
+            rYRate:
+                range: Float
+                ormColumn: 'type="float", options={"comment" = ""}'
+            rZRate:
+                range: Float
+                ormColumn: 'type="float", options={"comment" = ""}'
+            fromItrf:
+                range: Itrf
+                cardinality: "(*..1)"
+            toItrf:
+                range: Itrf
                 cardinality: "(*..1)"
