@@ -5,30 +5,122 @@ parameters:
 
 services:
 
-# Examples of API resource mapping, learn more at
-# https://github.com/dunglas/DunglasApiBundle
-    # resource.book:
-    #     parent:    "api.resource"
-    #     arguments: [ "AppBundle\\Entity\\Book" ]
-    #     tags:      [ { name: "api.resource" } ]
+    resource.agency:
+        parent:     "api.resource"
+        arguments: [ "AppBundle\\Entity\\Agency" ]
+        tags:      [ { name: "api.resource" } ]
 
-    # resource.person:
-    #     parent:    "api.resource"
-    #     arguments: [ "AppBundle\\Entity\\Person" ]
-    #     tags:      [ { name: "api.resource" } ]
+    resource.unit:
+        parent:     "api.resource"
+        arguments: [ "AppBundle\\Entity\\Unit" ]
+        tags:      [ { name: "api.resource" } ]
 
-    # resource.organization:
-    #     parent:    "api.resource"
-    #     arguments: [ "AppBundle\\Entity\\Organization" ]
-    #     calls:
-    #         -      [ "initFilters", [ [ "@resource.organization.filter" ] ] ]
-    #     tags:      [ { name: "api.resource" } ]
+    resource.contact:
+        parent:     "api.resource"
+        arguments: [ "AppBundle\\Entity\\Contact" ]
+        tags:      [ { name: "api.resource" } ]
 
-    # resource.organization.filter:
-    #     parent:    "api.doctrine.orm.search_filter"
-    #     arguments: [ { "name": "exact", "url": "partial" } ]
+    resource.contact_station:
+        parent:     "api.resource"
+        arguments: [ "AppBundle\\Entity\\ContactStation" ]
+        tags:      [ { name: "api.resource" } ]
 
-# A typical service
-#    service_name:
-#        class: AppBundle\Directory\ClassName
-#        arguments: ["@another_service_name", "plain_value", "%parameter_name%"]
+    resource.instrument:
+        parent:     "api.resource"
+        arguments: [ "AppBundle\\Entity\\Instrument" ]
+        tags:      [ { name: "api.resource" } ]
+
+    resource.itrf:
+        parent:     "api.resource"
+        arguments: [ "AppBundle\\Entity\\Itrf" ]
+        calls:
+            - method: "initPluralizedName"
+              arguments: [ 'Itrfs' ]
+        tags:      [ { name: "api.resource" } ]
+
+    resource.mail:
+        parent:     "api.resource"
+        arguments: [ "AppBundle\\Entity\\Mail" ]
+        tags:      [ { name: "api.resource" } ]
+
+    resource.plate_model:
+        parent:     "api.resource"
+        arguments: [ "AppBundle\\Entity\\PlateModel" ]
+        tags:      [ { name: "api.resource" } ]
+
+    resource.country:
+        parent:     "api.resource"
+        arguments: [ "AppBundle\\Entity\\Country" ]
+        tags:      [ { name: "api.resource" } ]
+
+    resource.photograph:
+        parent:     "api.resource"
+        arguments: [ "AppBundle\\Entity\\Photograph" ]
+        tags:      [ { name: "api.resource" } ]
+
+    resource.plate:
+        parent:     "api.resource"
+        arguments: [ "AppBundle\\Entity\\Plate" ]
+        tags:      [ { name: "api.resource" } ]
+
+    resource.sitelog_plate:
+        parent:     "api.resource"
+        arguments: [ "AppBundle\\Entity\\SitelogPlate" ]
+        tags:      [ { name: "api.resource" } ]
+
+    resource.reference_point:
+        parent:     "api.resource"
+        arguments: [ "AppBundle\\Entity\\ReferencePoint" ]
+        tags:      [ { name: "api.resource" } ]
+
+    resource.report:
+        parent:     "api.resource"
+        arguments: [ "AppBundle\\Entity\\Report" ]
+        tags:      [ { name: "api.resource" } ]
+
+    resource.solution:
+        parent:     "api.resource"
+        arguments: [ "AppBundle\\Entity\\Solution" ]
+        tags:      [ { name: "api.resource" } ]
+
+    resource.site:
+        parent:     "api.resource"
+        arguments: [ "AppBundle\\Entity\\Site" ]
+        tags:      [ { name: "api.resource" } ]
+
+    resource.station:
+        parent:     "api.resource"
+        arguments: [ "AppBundle\\Entity\\Station" ]
+        tags:      [ { name: "api.resource" } ]
+
+##################################################################
+
+    resource.cumulated_residual:
+        parent:     "api.resource"
+        arguments: [ "AppBundle\\Entity\\CumulatedResidual" ]
+        tags:      [ { name: "api.resource" } ]
+
+    resource.covariance:
+        parent:     "api.resource"
+        arguments: [ "AppBundle\\Entity\\Covariance" ]
+        tags:      [ { name: "api.resource" } ]
+
+    resource.solution:
+        parent:     "api.resource"
+        arguments: [ "AppBundle\\Entity\\Solution" ]
+        tags:      [ { name: "api.resource" } ]
+
+    resource.plate_rotation_pole:
+        parent:     "api.resource"
+        arguments: [ "AppBundle\\Entity\\PlateRotationPole" ]
+        tags:      [ { name: "api.resource" } ]
+
+    resource.soln:
+        parent:     "api.resource"
+        arguments: [ "AppBundle\\Entity\\Soln" ]
+        tags:      [ { name: "api.resource" } ]
+
+    resource.transformation:
+        parent:     "api.resource"
+        arguments: [ "AppBundle\\Entity\\Transformation" ]
+        tags:      [ { name: "api.resource" } ]
