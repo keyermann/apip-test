@@ -1,0 +1,546 @@
+rdfa:
+    - http://localhost/schema.rdfa
+relations:
+    - http://localhost/v1.owl
+annotationGenerators: # Generators we want to use, keep it as is for any API Platform project
+    - ApiPlatform\SchemaGenerator\AnnotationGenerator\PhpDocAnnotationGenerator
+    - ApiPlatform\SchemaGenerator\AnnotationGenerator\DoctrineOrmAnnotationGenerator
+    - ApiPlatform\SchemaGenerator\AnnotationGenerator\ConstraintAnnotationGenerator
+    - ApiPlatform\SchemaGenerator\AnnotationGenerator\DunglasApiAnnotationGenerator
+# debug: true
+header: |
+  /*
+   * This file is part of the ITRF API project.
+   *
+   * (c) Kévin Eyermann <kevin.eyermann@ign.fr>
+   *
+   * For the full copyright and license information, please view the LICENSE
+   * file that was distributed with this source code.
+   */
+author: "Kévin Eyermann <kevin.eyermann@ign.fr>"
+namespaces:
+    entity: AppBundle\Entity
+types:
+    Agency:
+        parent: false
+        guessFrom: Organization
+        properties:
+            name:
+                ormColumn: 'type="text", unique=true, options={"comment" = "The agency name."}'
+            acronym:
+                range: Text
+                ormColumn: 'type="text", nullable=true, options={"comment" = "An acronym for the agency."}'
+            address:
+                range: Text
+                ormColumn: 'type="text", nullable=true, options={"comment" = "Address of the agency."}'
+            # employee:                                 ####
+            #     range: Person
+            #     cardinality: "(1..*)"
+    Unit: # Block
+        parent: false
+        guessFrom: Thing
+        properties:
+            number:
+                range: Number
+                ormColumn: 'type="string", length=8, options={"comment" = "DOMES number."}'
+            designation:
+                range: Text
+                ormColumn: 'type="text", nullable=true, options={"comment" = "Désigantion."}'
+    Contact:
+        parent: false
+        guessFrom: Person
+        properties:
+            name:
+                ormColumn: 'type="text", nullable=false, options={"comment" = "The person name."}'
+            workFor:
+                range: Agency
+                cardinality: "(*..0)"
+            telephone:
+                ormColumn: 'name="telephone_1", type="text", nullable=true, options={"comment" = "Main phone number."}'
+            telephone2:
+                range: Text
+                ormColumn: 'name="telephone_2", type="text", nullable=true, options={"comment" = "Second phone number."}'
+            faxNumber:
+                ormColumn: 'type="text", nullable=true, options={"comment" = "Fax number."}'
+            email:
+                ormColumn: 'type="text", nullable=true, options={"comment" = "Email address."}'
+            # stations:                                 ????
+            #     range:
+    ContactStation:
+        parent: false
+        guessFrom: Thing
+        properties:
+            contact:
+                range: Contact
+                cardinality: "(*..1)"
+            station:
+                range: Station
+                cardinality: "(*..1)"
+            contactType:
+                range: Text
+                ormColumn: 'type="text", options={"comment" = "The contact type for the station."}'
+            startDate:
+                range: Date
+                ormColumn: 'type="date", nullable=true, options={"comment" = "Starting date."}'
+            endDate:
+                range: Date
+                ormColumn: 'type="date", nullable=true, options={"comment" = "Ending date."}'
+    Instrument:
+        parent: false
+        guessFrom: IndividualProduct
+        properties:
+            serialNumber:
+                ormColumn: 'type="string", length=50, nullable=true, options={"comment" = "Serial number."}'
+            category:
+                range: Text
+                ormColumn: 'type="string", nullable=true, options={"comment" = "Product type."}'
+            atx:
+                range: Text
+                ormColumn: 'type="string", length=50, nullable=true, options={"comment" = "ATX file informations."}'
+            installedDate:
+                range: Date
+                ormColumn: 'type="date", nullable=true, options={"comment" = "Installation date of the instrument."}'
+            removedDate:
+                range: Date
+                ormColumn: 'type="date", nullable=true, options={"comment" = "Uninstallation date of the instrument."}'
+            specifications:
+                range: Text
+                ormColumn: 'type="jsonb", nullable=true, options={"comment" = "Instrument specifications."}'
+            station:
+                range: Station
+                cardinality: "(*..1)"
+    Itrf:
+        parent: false
+        guessFrom: Thing
+        properties:
+            name:
+                ormColumn: 'type="string", length=8, unique=true, options={"comment" = "ITRF solution name"}'
+    Mail:
+        parent: false
+        guessFrom: EmailMessage
+        properties:
+            # ewsId:
+            #     range: Text
+            #     ormColumn: 'type="text", options={"comment" = "ews ID."}'
+            subject:
+                range: Text
+                ormColumn: 'type="text", nullable=true, options={"comment" = "Subject of the mail."}'
+            body:
+                range: Text
+                ormColumn: 'type="text", nullable=true, options={"comment" = "Content of the mail."}'
+            bodyType:
+                range: Text
+                ormColumn: 'type="text", nullable=true, options={"comment" = "Content type of the mail."}'
+            # references:
+            #     range: Text
+            #     ormColumn: 'type="text", nullable=true, options={"comment" = "References (parent mails)."}'
+            fromName:
+                range: Text
+                ormColumn: 'type="text", nullable=true, options={"comment" = "Sender name."}'
+            fromMail:
+                range: Text
+                ormColumn: 'type="text", nullable=true, options={"comment" = "Sender email address."}'
+            to:
+                range: Text
+                ormColumn: 'type="text", nullable=true, options={"comment" = "Recipients."}'
+            cc:
+                range: Text
+                ormColumn: 'type="text", nullable=true, options={"comment" = "Copy recipients."}'
+            sentDate:
+                range: DateTime
+                ormColumn: 'type="datetimetz", nullable=true, options={"comment" = "La date d’envoi du mail d’ews."}'
+            # culture:
+            #     range: Text
+            #     ormColumn: 'type="text", nullable=true'
+            stations:
+                range: Text
+                ormColumn: 'type="text", nullable=true, options={"comment" = "Station list detected in the mail subject."}'
+            domes:
+                range: Text
+                ormColumn: 'type="text", nullable=true, options={"comment" = "DOMES number detected in mail content."}'
+            ewsMail:
+                range: Text
+                ormColumn: 'type="text", nullable=true, options={"comment" = "The EWS mail in txt."}'
+            parent:
+                range: Mail
+                cardinality: "(*..1)"
+    PlateModel:
+        parent: false
+        guessFrom: Thing
+        properties:
+            name:
+                ormColumn: 'type="string", length=50, options={"comment" = "The plate name."}'
+            abbreviation:
+                range: Text
+                ormColumn: 'type="string", length=15, options={"comment" = "Short name of the plate."}'
+            geom:
+                range: Text
+                ormColumn: 'type="MultiPolygon", nullable=true, options={"comment" = "The plate geometry."}'
+            # plates:                                   ####
+            #     range: Plate
+            #     cardinality: "(1..*)"
+    Country: # Pays
+        parent: false
+        properties:
+            number:
+                range: Number
+                ormColumn: 'type="string", length=3, unique=true, options={"comment" = "Country number."}'
+            name:
+                range: Text
+                ormColumn: 'type="string", length=100, nullable=true, options={"comment" = "Country name."}'
+            isoCodeV2:
+                range: Text
+                ormColumn: 'type="string", length=2, nullable=true, options={"comment" = "ISO code v2."}'
+            isoCodeV3:
+                range: Text
+                ormColumn: 'type="string", length=3, nullable=true, options={"comment" = "ISO code v3."}'
+            # sites:                                    ####
+            #     range: Site
+            #     cardinality: "(1..*)"
+    Photograph:
+        parent: false
+        properties:
+            name:
+                unique: true
+                ormColumn: 'type="string", length=70, unique=true, options={"comment" = "Picture name."}'
+            date:
+                range: Date
+                nullable: true
+                ormColumn: 'type="date", nullable=true, options={"comment" = "Picture date."}'
+            isPublic:
+                range: Boolean
+                ormColumn: 'type="boolean", options={"comment" = "Is the picture public ?"}'
+            # comments:
+            #     range: Text
+            #     ormColumn: 'type="text", nullable=true'
+            site:
+                range: Site
+                cardinality: "(*..0)"
+    Plate:
+        parent: false
+        guessFrom: Thing
+        properties:
+            name:
+                ormColumn: 'type="string", length=50, options={"comment" = "Plate name."}'
+            abbreviation:
+                range: Text
+                ormColumn: 'type="string", length=15, options={"comment" = "Plate short name."}'
+            geom:
+                range: Text
+                ormColumn: 'type="MultiPolygon", nullable=true, options={"comment" = "Plate geometry."}'
+            plateModel:
+                range: PlateModel
+                cardinality: "(*..1)"
+    SitelogPlate:
+        parent: false
+        guessFrom: Thing
+        properties:
+            name:
+                unique: true
+                ormColumn: 'type="string", length=50, unique=true, options={"comment" = "Plate name."}'
+            abbreviation:
+                range: Text
+                unique: true
+                ormColumn: 'type="string", length=15, unique=true, options={"comment" = "Plate short name."}'
+            # Site:                                     ####
+            #     range: Site
+            #     cardinality: "(1..*)"
+    ReferencePoint:
+        parent: false
+        guessFrom: Thing
+        properties:
+            name:
+                range: Text
+                nullable: true
+                ormColumn: 'type="text", nullable=true, options={"comment" = "Reference point name."}'
+            domes:
+                range: Text
+                nullable: true
+                ormColumn: 'type="string", length=50, nullable=true, options={"comment" = "Reference point DOMES number."}'
+            startDate:
+                range: Date
+                nullable: true
+                ormColumn: 'type="date", nullable=true, options={"comment" = "Start of the reference point utilization."}'
+            endDate:
+                range: Date
+                nullable: true
+                ormColumn: 'type="date", nullable=true, options={"comment" = "End of the reference point utilization."}'
+            height:
+                range: Float
+                nullable: true
+                ormColumn: 'type="float", nullable=true, options={"comment" = "Approximative height of the point."}'
+            type:
+                range: Text
+                nullable: true
+                ormColumn: 'type="text", nullable=true, options={"comment" = "Type of tehe point."}'
+            site:
+                range: Site
+                cardinality: "(*..0)"
+            # stations:                                 ####
+            #     range: Station
+            #     cardinality: "(*..*)"
+            # referencePointNumbers:
+            #     range: ReferencePointNumbers
+            #     cardinality: "(1..*)"
+    # ReferencePointNumbers:
+    #     parent: false
+    #     guessFrom: Thing
+    #     properties:
+    #         number: {range:Text, nullable: true}
+    #         referencePoint:
+    #             range: ReferencePoint
+    #             cardinality: "(*..1)"
+    #         unit:
+    #             range: Unit
+    #             cardinality: "(*..1)"
+    Report:
+        parent: false
+        properties:
+            name:
+                range: Text
+                unique: true
+                ormColumn: 'type="string", length=200, unique=true, options={"comment" = "Report name."}'
+            isPublic:
+                range: Boolean
+                ormColumn: 'type="boolean", options={"comment" = "Is the report public ?."}'
+    Site:
+        parent: false
+        guessFrom: Place
+        properties:
+            number:
+                range: Text
+                unique: true
+                ormColumn: 'type="string", length=50, unique=true,options={"comment" = "Site number."}'
+            name:
+                range: Text
+                nullable: true
+                ormColumn: 'type="string", length=100, nullable=true, options={"comment" = "Site name."}'
+            city:
+                range: Text
+                nullable: true
+                ormColumn: 'type="text", nullable=true, options={"comment" = "Site city."}'
+            region:
+                range: Text
+                nullable: true
+                ormColumn: 'type="text", nullable=true, options={"comment" = "Site region/province."}'
+            geom:
+                range: Text
+                nullable: true
+                ormColumn: 'type="Point", nullable=true, options={"comment" = "Site geometry."}'
+            # referencePoints:                          ####
+            #     range: ReferencePoint
+            #     cardinality: "(1..*)"
+            # stations:                                 ####
+            #     range: Station
+            #     cardinality: "(1..*)"
+            # photographs:                              ####
+            #     range: Photograph
+            #     cardinality: "(1..*)"
+            country:
+                range: Country
+                cardinality: "(*..1)"
+            sitelogPlate:
+                range: SitelogPlate
+                cardinality: "(*..1)"
+    Station:
+        parent: false
+        guessFrom: Place
+        properties:
+            acronym:
+                range: Text
+                ormColumn: 'type="string", length=8, options={"comment" = "Station acronym."}'
+            cdp:
+                range: Text
+                nullable: true
+                ormColumn: 'type="string", length=10, nullable=true, options={"comment" = "Station CDP code."}'
+            code2:
+                range: Text
+                nullable: true
+                ormColumn: 'type="string", length=20, nullable=true, options={"comment" = "Station internal secondary code."}'
+            description:
+                range: Text
+                nullable: true
+                ormColumn: 'type="string", length=50, nullable=true, options={"comment" = "Station description."}'
+            startDate:
+                range: Date
+                ormColumn: 'type="date", nullable=true, options={"comment" = "Station activation date."}'
+            endDate:
+                range: Date
+                ormColumn: 'type="date", nullable=true, options={"comment" = "Station deactivation date."}'
+            dataCenters:
+                range: Text
+                nullable: true
+                ormColumn: 'type="text", nullable=true, options={"comment" = "Data center using this station."}'
+            logsheet:
+                range: Text
+                nullable: true
+                ormColumn: 'type="text", nullable=true, options={"comment" = "Logsheet de la station."}'
+            eccentricity:
+                range: Text
+                nullable: true
+                ormColumn: 'type="string", length=50, nullable=true, options={"comment" = "Station excentricity."}'
+            technique:
+                range: Text
+                nullable: true
+                ormColumn: 'type="string", nullable=true, options={"comment" = "Station technique."}'
+            coordinateReferencePoint:
+                range: ReferencePoint
+                cardinality: "(*..1)"
+            referencePoints:
+                range: ReferencePoint
+                cardinality: "(*..*)"
+            # instruments:                              ####
+            #     range: Instrument
+            #     cardinality: "(1..*)"
+            site:
+                range: Site
+                cardinality: "(*..1)"
+            # contacts:                                 ####
+            #     range: ContactStation
+            #     cardinality: "(1..*)"
+#############################################################################################################
+    # Calcul ???
+    # CorrectionCalcul ???
+    # FichierCalcul ???
+    # FichierObs ???
+    # InstrumentTerrain ???
+    # Logiciel ???
+    # Matrice ???
+    # Member ???
+    # Mission ???
+    CumulatedResidual:
+        parent: false
+        guessFrom: Thing
+        properties:
+            trended:
+                range: Float
+                nullable: true
+                ormColumn: 'type="float", nullable=true, options={"comment" = "Trended value."}'
+            untrended:
+                range: Float
+                nullable: true
+                ormColumn: 'type="float", nullable=true, options={"comment" = "Untrended value."}'
+            sigma:
+                range: Float
+                nullable: true
+                ormColumn: 'type="float", nullable=true, options={"comment" = "Sigma."}'
+            axis:
+                range: Text
+                ormColumn: 'type="string", length=1, options={"comment" = "Axis."}'
+            referenceDate:
+                range: DateTime
+                ormColumn: 'type="datetime", options={"comment" = "Reference date."}'
+            itrf:
+                range: Itrf
+                cardinality: "(*..1)"
+            referencePoint:
+                range: ReferencePoint
+                cardinality: "(*..1)"
+    Covariance:
+        parent: false
+        guessFrom: Thing
+        properties:
+            index1:
+                range: Integer
+                ormColumn: 'type="integer", options={"comment" = ""}'
+            index2:
+                range: Integer
+                ormColumn: 'type="integer", options={"comment" = ""}'
+            value:
+                range: Float
+                ormColumn: 'type="float", options={"comment" = ""}'
+            solution1:
+                range: Solution
+                cardinality: "(*..1)"
+            solution2:
+                range: Solution
+                cardinality: "(*..1)"
+    Solution:
+        parent: false
+        guessFrom: Thing
+        properties:
+            index:
+                range: Integer
+                ormColumn: 'type="integer", options={"comment" = ""}'
+            epoch:
+                range: DateTime
+                ormColumn: 'type="datetime", options={"comment" = ""}'
+            type:
+                range: Text
+                ormColumn: 'type="string", length=4, options={"comment" = ""}'
+            value:
+                range: Float
+                ormColumn: 'type="float", options={"comment" = ""}'
+            standardDeviation:
+                range: Float
+                ormColumn: 'type="float", options={"comment" = ""}'
+            itrf:
+                range: Itrf
+                cardinality: "(*..1)"
+            referencePoint:
+                range: ReferencePoint
+                cardinality: "(*..1)"
+            # soln:
+            #     range: Soln
+            #     cardinality: "(*..1)"
+    PlateRotationPole:
+        parent: false
+        guessFrom: Thing
+        properties:
+            xAxis:
+                range: Float
+                ormColumn: 'type="float", options={"comment" = ""}'
+            yAxis:
+                range: Float
+                ormColumn: 'type="float", options={"comment" = ""}'
+            zAxis:
+                range: Float
+                ormColumn: 'type="float", options={"comment" = ""}'
+            lambda:
+                range: Float
+                ormColumn: 'type="float", options={"comment" = ""}'
+            phi:
+                range: Float
+                ormColumn: 'type="float", options={"comment" = ""}'
+            sigmaLambda:
+                range: Float
+                ormColumn: 'type="float", options={"comment" = ""}'
+            sigmaPhi:
+                range: Float
+                ormColumn: 'type="float", options={"comment" = ""}'
+            tX:
+                range: Float
+                ormColumn: 'type="float", options={"comment" = ""}'
+            tY:
+                range: Float
+                ormColumn: 'type="float", options={"comment" = ""}'
+            tZ:
+                range: Float
+                ormColumn: 'type="float", options={"comment" = ""}'
+            plate:
+                range: Plate
+                cardinality: "(*..1)"
+            itrf:
+                range: Itrf
+                cardinality: "(*..1)"
+    Soln:
+        parent: false
+        guessFrom: Thing
+        properties:
+            fromDate:
+                range: DateTime
+                ormColumn: 'type="datetime", options={"comment" = ""}'
+            toDate:
+                range: DateTime
+                ormColumn: 'type="datetime", options={"comment" = ""}'
+            comment:
+                range: Text
+            type:
+                range: Text
+                ormColumn: 'type="string", length=1, options={"comment" = ""}'
+            itrf:
+                range: Itrf
+                cardinality: "(*..1)"
+            referencePoint:
+                range: ReferencePoint
+                cardinality: "(*..1)"
