@@ -358,41 +358,41 @@ types: # The list of type to generated (a PHP entity class by type will be gener
         properties:
             acronym:
                 range: Text
-                ormColumn: ''
+                ormColumn: 'type="string", length=8, options={"comment" = "Station acronym."}'
             cdp:
                 range: Text
                 nullable: true
-                ormColumn: ''
+                ormColumn: 'type="string", length=10, nullable=true, options={"comment" = "Station CDP code."}'
             code2:
                 range: Text
                 nullable: true
-                ormColumn: ''
+                ormColumn: 'type="string", length=20, nullable=true, options={"comment" = "Station internal secondary code."}'
             description:
                 range: Text
                 nullable: true
-                ormColumn: ''
+                ormColumn: 'type="string", length=50, nullable=true, options={"comment" = "Station description."}'
             startDate:
                 range: Date
-                ormColumn: ''
+                ormColumn: 'type="date", nullable=true, options={"comment" = "Station activation date."}'
             endDate:
                 range: Date
-                ormColumn: ''
+                ormColumn: 'type="date", nullable=true, options={"comment" = "Station deactivation date."}'
             dataCenters:
                 range: Text
                 nullable: true
-                ormColumn: ''
+                ormColumn: 'type="text", nullable=true, options={"comment" = "Data center using this station."}'
             logsheet:
                 range: Text
                 nullable: true
-                ormColumn: ''
+                ormColumn: 'type="text", nullable=true, options={"comment" = "Logsheet de la station."}'
             eccentricity:
                 range: Text
                 nullable: true
-                ormColumn: ''
+                ormColumn: 'type="string", length=50, nullable=true, options={"comment" = "Station excentricity."}'
             technique:
                 range: Text
                 nullable: true
-                ormColumn: ''
+                ormColumn: 'type="string", nullable=true, options={"comment" = "Station technique."}'
             coordinateReferencePoint:
                 range: ReferencePoint
                 cardinality: "(*..1)"
