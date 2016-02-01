@@ -459,6 +459,7 @@ types:
     Solution: #ItrfSolution
         parent: false
         guessFrom: Thing
+        ormTable: 'schema="itrf"'
         properties:
             index:
                 range: Integer
